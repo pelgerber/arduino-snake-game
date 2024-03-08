@@ -13,20 +13,21 @@ class Snake {
     Snake(uint32_t gridHeight, uint32_t gridWidth, uint32_t start_x = 0, uint32_t start_y = 0);
 
     enum class Direction {
-      UP,
-      DOWN,
-      LEFT,
-      RIGHT
+      UP = 0,
+      LEFT = 1,
+      RIGHT = 2,
+      DOWN = 3
     };
 
     
     //SnakePoint getHead(void);
     void turn(Direction dir);
+    void move(void);
     SnakePoint getHead(void);
 
   private:
-    void update(void);
     std::vector<SnakePoint> body;
     uint32_t gridHeight, gridWidth;
+    Direction snakeDir;
 
 };

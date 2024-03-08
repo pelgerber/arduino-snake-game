@@ -68,6 +68,12 @@ void setup() {
 
   Snake snake(ROWS, COLUMNS);
 
+  snake.turn(Snake::Direction::LEFT); // error, was RIGHT
+
+  snake.move();
+
+  snake
+
 }
 
 
