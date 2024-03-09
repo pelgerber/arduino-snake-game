@@ -8,18 +8,11 @@
 
 #define ARE_DIR_OPPOSITE(dir1, dir2) ((~((uint8_t)dir1) & 3) == (uint8_t)dir2)
 
-Snake::Snake(uint32_t gridWidth, uint32_t gridHeight, uint32_t start_x, uint32_t start_y) {
+Snake::Snake(uint32_t gridWidth, uint32_t gridHeight) {
   this->gridHeight = gridHeight;
   this->gridWidth = gridWidth;
 
-  // Add starting point (head)
-  //this->body.push_back(SnakePoint(start_x, start_y));
-  this->body.push_back(SnakePoint(0, 0));
-  this->body.push_back(SnakePoint(1, 0));
-  this->body.push_back(SnakePoint(2, 0));
-  this->growing = false;
-  this->dead = false;
-  this->snakeDir = Direction::RIGHT;
+  this->clear();
 
 };
 
@@ -48,6 +41,19 @@ void Snake::showPoints(void) {
 
 void Snake::grow() {
   this->growing = true;
+}
+
+void Snake::clear() {
+  this->body.clear();
+
+  // Add starting points (head is the last one)
+  this->body.push_back(SnakePoint(0, 0));
+  this->body.push_back(SnakePoint(1, 0));
+  this->body.push_back(SnakePoint(2, 0));
+
+  this->growing = false;
+  this->dead = false;
+  this->snakeDir = Direction::RIGHT;
 }
 
 bool Snake::isDead(void) {

@@ -4,7 +4,7 @@
 
 class Snake {
   public:
-    Snake(uint32_t gridWidth, uint32_t gridHeight, uint32_t start_x = 0, uint32_t start_y = 0);
+    Snake(uint32_t gridWidth, uint32_t gridHeight);
 
     enum class Direction {
       UP = 0,
@@ -33,6 +33,7 @@ class Snake {
     std::vector<SnakePoint> getBodyPoints(void);
     void grow(void);
     bool isDead(void);
+    void clear(void);
 
   private:
     std::vector<SnakePoint> body;
