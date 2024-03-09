@@ -15,8 +15,18 @@
 #define COLUMNS 12
 
 ArduinoLEDMatrix matrix;
+Snake snake(ROWS, COLUMNS);
 
-
+byte frame[ROWS][COLUMNS] = {
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+};
 
 int key = -1;
 int keyUp = 'w';
@@ -46,6 +56,7 @@ int getKey(){
   return userInput;
 }
 
+
 void printConfig(){
   Serial.println("Configuration:");
   Serial.print("key UP: ");
@@ -63,47 +74,58 @@ void printConfig(){
 void setup() {
   // initialize serial communications at 9600 bps:
   Serial.begin(9600);
+  // start LED matrix
+  matrix.begin();
 
-  Serial.println("Starting pen..\n");
+  snake.turn(Snake::Direction::DOWN); 
 
-  Snake snake(ROWS, COLUMNS);
 
-  snake.turn(Snake::Direction::RIGHT); 
-
-  snake.showPoints();
   snake.move();
-  snake.showPoints();
   snake.grow();
   snake.move();
-  snake.showPoints();
   snake.grow();
   snake.move();
-  snake.showPoints();
   snake.grow();
   snake.move();
-  snake.showPoints();
-  snake.turn(Snake::Direction::UP);
+  snake.grow();
   snake.move();
-  snake.showPoints();
-  snake.turn(Snake::Direction::LEFT);
-  snake.move();
-  snake.showPoints();
-  snake.turn(Snake::Direction::DOWN);
-  Serial.println("Now sanke should die..");
-  snake.move();
-  snake.showPoints();
-  snake.move();
-  snake.showPoints();
-  snake.move();
-  snake.showPoints();
-
-
-
 
 }
 
 
 void loop() {
 
+  key = Serial.read();
+
+  if (key == keyUp){
+    snake.turn(Snake::Direction::UP);
+  }
+  else if (key == keyDown){
+    snake.turn(Snake::Direction::DOWN);
+  }
+  else if (key == keyRight){
+    snake.turn(Snake::Direction::RIGHT);
+  }
+  else if (key == keyLeft){
+    snake.turn(Snake::Direction::LEFT);
+  }
+
+  // reset frame
+  memset(frame, 0, sizeof(frame[0][0]) * ROWS * COLUMNS);
+  
+
+  auto points = snake.getBodyPoints();
+
+  // paint snake on frame
+  for (auto &iPoint : points) {
+    frame[iPoint.x][iPoint.y] = 1;
+  }
+
+  snake.showPoints();
+
+  matrix.renderBitmap(frame, ROWS, COLUMNS);
+
+  delay(200);
+  snake.move();
 
 }

@@ -8,7 +8,7 @@
 
 #define ARE_DIR_OPPOSITE(dir1, dir2) ((~((uint8_t)dir1) & 3) == (uint8_t)dir2)
 
-Snake::Snake(uint32_t gridHeight, uint32_t gridWidth, uint32_t start_x, uint32_t start_y) {
+Snake::Snake(uint32_t gridWidth, uint32_t gridHeight, uint32_t start_x, uint32_t start_y) {
   this->gridHeight = gridHeight;
   this->gridWidth = gridWidth;
 
@@ -23,7 +23,7 @@ Snake::Snake(uint32_t gridHeight, uint32_t gridWidth, uint32_t start_x, uint32_t
 
 };
 
-SnakePoint Snake::getHead(void) {
+Snake::SnakePoint Snake::getHead(void) {
   return this->body.back();
 }
 
@@ -54,6 +54,10 @@ bool Snake::isDead(void) {
   return this->dead;
 }
 
+std::vector<Snake::SnakePoint> Snake::getBodyPoints(void) {
+  return this->body;
+}
+
 void Snake::move(void) {
 
   // set previous point to the head
@@ -62,10 +66,10 @@ void Snake::move(void) {
 
   // move head first in the right direction
   switch (this->snakeDir) {
-    case Snake::Direction::UP:
+    case Snake::Direction::DOWN:
       body.back().y = DECR_POS(body.back().y, gridHeight);
       break;
-    case Snake::Direction::DOWN:
+    case Snake::Direction::UP:
       body.back().y = INCR_POS(body.back().y, gridHeight);
       break;
     case Snake::Direction::RIGHT:
