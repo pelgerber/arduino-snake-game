@@ -15,46 +15,94 @@ Snake::Snake(uint32_t gridHeight, uint32_t gridWidth, uint32_t start_x, uint32_t
   // Add starting point (head)
   //this->body.push_back(SnakePoint(start_x, start_y));
   this->body.push_back(SnakePoint(0, 0));
-  this->body.push_back(SnakePoint(0, 1));
-  this->body.push_back(SnakePoint(0, 2));
+  this->body.push_back(SnakePoint(1, 0));
+  this->body.push_back(SnakePoint(2, 0));
+  this->growing = false;
+  this->dead = false;
   this->snakeDir = Direction::RIGHT;
 
-  /*for (const auto &item : body) {
-    Serial.println("point: ");
-    Serial.println(item.x);
-    Serial.println(item.y);
-  }*/
 };
 
 SnakePoint Snake::getHead(void) {
   return this->body.back();
 }
 
+void Snake::showPoints(void) {
+  Serial.print("direction: ");
+  Serial.println((uint8_t)this->snakeDir);
 
-void Snake::move(void){
+  Serial.println("points: ");
+  for (const auto &point : body) {
+    Serial.print(point.x);
+    Serial.print(",");
+    Serial.print(point.y);
+    Serial.print(" ");
+  }
+  Serial.println(" ");
+
+  if (this->dead) {
+    Serial.println("Snake is dead!!");
+  }
+
+}
+
+void Snake::grow() {
+  this->growing = true;
+}
+
+bool Snake::isDead(void) {
+  return this->dead;
+}
+
+void Snake::move(void) {
 
   // set previous point to the head
   SnakePoint prevPoint = this->body.back();
+  SnakePoint temp;
 
   // move head first in the right direction
   switch (this->snakeDir) {
     case Snake::Direction::UP:
-      this->body.back().y = DECR_POS(this->body.back().y, gridHeight);
+      body.back().y = DECR_POS(body.back().y, gridHeight);
       break;
     case Snake::Direction::DOWN:
-      this->body.back().y = INCR_POS(this->body.back().y, gridHeight);
+      body.back().y = INCR_POS(body.back().y, gridHeight);
       break;
     case Snake::Direction::RIGHT:
-      this->body.back().x = INCR_POS(this->body.back().x, gridWidth);
+      body.back().x = INCR_POS(body.back().x, gridWidth);
       break;
     case Snake::Direction::LEFT:
-      this->body.back().x = DECR_POS(this->body.back().x, gridWidth);
+      body.back().x = DECR_POS(body.back().x, gridWidth);
       break;
   }
 
-  for (std::vector<SnakePoint>::reverse_iterator rit = body.rbegin(); rit != body.rend(); ++rit) {
-    *rit = prevPoint;
-    prevPoint = *rit;
+  if(this->growing) {
+
+    this->growing = false;
+    // add point (duplicate head)
+    body.push_back(body.back());
+    // move the older head to its previous position
+    //body[body.size()-2] = prevPoint;
+    body.rbegin()[1] = prevPoint;
+
+  } else if (body.size() > 1) {
+
+    // iterate backwards (from the point next to the head)
+    for (auto rIt = (body.rbegin()+1); rIt != body.rend(); ++rIt) {
+
+      // move the point to the position of the point before
+      temp = *rIt;
+      *rIt = prevPoint;
+      prevPoint = temp;
+
+    }
+
+  }
+
+  // check if snake is dead
+  for (auto iPoint = body.begin(); iPoint != std::prev(body.end()); ++iPoint) {
+    if (dead) break; // snake is already dead
+    dead = body.back() == *iPoint;
   }
 
 }

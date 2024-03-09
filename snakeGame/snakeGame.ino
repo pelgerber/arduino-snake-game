@@ -68,11 +68,37 @@ void setup() {
 
   Snake snake(ROWS, COLUMNS);
 
-  snake.turn(Snake::Direction::LEFT); // error, was RIGHT
+  snake.turn(Snake::Direction::RIGHT); 
 
+  snake.showPoints();
   snake.move();
+  snake.showPoints();
+  snake.grow();
+  snake.move();
+  snake.showPoints();
+  snake.grow();
+  snake.move();
+  snake.showPoints();
+  snake.grow();
+  snake.move();
+  snake.showPoints();
+  snake.turn(Snake::Direction::UP);
+  snake.move();
+  snake.showPoints();
+  snake.turn(Snake::Direction::LEFT);
+  snake.move();
+  snake.showPoints();
+  snake.turn(Snake::Direction::DOWN);
+  Serial.println("Now sanke should die..");
+  snake.move();
+  snake.showPoints();
+  snake.move();
+  snake.showPoints();
+  snake.move();
+  snake.showPoints();
 
-  snake
+
+
 
 }
 

@@ -3,9 +3,13 @@
 
 class SnakePoint {
   public:
-  SnakePoint(uint32_t x, uint32_t y) : x(x), y(y) {}
+  SnakePoint(uint32_t x=0, uint32_t y=0) : x(x), y(y) {}
   uint32_t x;
   uint32_t y;
+
+  friend bool operator==(const SnakePoint& lhs, const SnakePoint& rhs) {
+    return (lhs.x == rhs.x) && (lhs.y == rhs.y);
+  }
 };
 
 class Snake {
@@ -24,10 +28,15 @@ class Snake {
     void turn(Direction dir);
     void move(void);
     SnakePoint getHead(void);
+    void showPoints(void); 
+    void grow(void);
+    bool isDead(void);
 
   private:
     std::vector<SnakePoint> body;
     uint32_t gridHeight, gridWidth;
+    bool growing;
+    bool dead;
     Direction snakeDir;
 
 };
