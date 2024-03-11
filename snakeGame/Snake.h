@@ -29,11 +29,13 @@ class Snake {
     void turn(Direction dir);
     void move(void);
     SnakePoint getHead(void);
-    void showPoints(void);
     std::vector<SnakePoint> getBodyPoints(void);
     void grow(void);
     bool isDead(void);
     void clear(void);
+#ifdef Serial
+    void showPoints(void);
+#endif
 
   private:
     std::vector<SnakePoint> body;

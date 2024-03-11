@@ -20,7 +20,9 @@ Snake::SnakePoint Snake::getHead(void) {
   return this->body.back();
 }
 
+#ifdef Serial
 void Snake::showPoints(void) {
+
   Serial.print("direction: ");
   Serial.println((uint8_t)this->snakeDir);
 
@@ -31,13 +33,14 @@ void Snake::showPoints(void) {
     Serial.print(point.y);
     Serial.print(" ");
   }
-  Serial.println(" ");
+  Serial.println("");
 
   if (this->dead) {
     Serial.println("Snake is dead!!");
   }
 
 }
+#endif
 
 void Snake::grow() {
   this->growing = true;
