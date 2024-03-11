@@ -9,10 +9,11 @@
 
 */
 
-#if __has_include("ArduinoGraphics.h") 
-  // To use ArduinoGraphics APIs, please include BEFORE Arduino_LED_Matrix
-  #include <ArduinoGraphics.h>
-#endif
+// somehow __has_include does not work for me (even if compiling with C++17), too bad
+//#if __has_include("ArduinoGraphics.h") 
+// To use ArduinoGraphics APIs, please include BEFORE Arduino_LED_Matrix
+#include <ArduinoGraphics.h> // Just comment out if ArduinoGraphics not installed 
+//#endif
 #include <Arduino_LED_Matrix.h>
 
 #include "Snake.h"
