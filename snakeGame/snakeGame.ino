@@ -8,7 +8,13 @@
   - none
 
 */
+
+#if __has_include("ArduinoGraphics.h") 
+  // To use ArduinoGraphics APIs, please include BEFORE Arduino_LED_Matrix
+  #include <ArduinoGraphics.h>
+#endif
 #include <Arduino_LED_Matrix.h>
+
 #include "Snake.h"
 
 #define ROWS 8
@@ -30,27 +36,10 @@ byte frame[ROWS][COLUMNS] = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
-byte dead[ROWS][COLUMNS] = {
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0 },
-  { 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1 },
-  { 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1 },
-  { 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1 },
-  { 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0 },
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-};
+const String gameoverMsg =  "  GAME OVER  ";
+const String welcomeMsg =   "  SNAKE GAME  ";
+const String scoreMsg =     "  SCORE:  ";
 
-byte gameover[ROWS][COLUMNS] = {
-  { 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0 },
-  { 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0 },
-  { 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0 },
-  { 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0 },
-  { 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0 },
-  { 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0 },
-  { 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0 },
-  { 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0 }
-};
 
 int key = -1;
 int keyUp = 'w';
@@ -69,6 +58,21 @@ void printControls(){
   Serial.println((char)keyRight);
   Serial.print("key LEFT: ");
   Serial.println((char)keyLeft);
+  Serial.println(__cplusplus);
+}
+
+void displayScrollText(String text) {
+  #ifdef _ARDUINO_GRAPHICS_H
+  matrix.beginDraw();
+  matrix.stroke(0xFFFFFFFF);
+  matrix.textScrollSpeed(100);
+  matrix.textFont(Font_5x7);
+  matrix.beginText(0, 1, 0xFFFFFF);
+  // add the text
+  matrix.println(text);
+  matrix.endText(SCROLL_LEFT);
+  matrix.endDraw();
+  #endif
 }
 
 void setup() {
@@ -79,6 +83,8 @@ void setup() {
   matrix.begin();
 
   printControls();
+
+  displayScrollText(welcomeMsg);
 
   placeFood();
 
@@ -95,9 +101,6 @@ void renderSnake(void) {
   for (auto &iPoint : points) {
     frame[iPoint.x][iPoint.y] = 1;
   }
-
-  // log points
-  //snake.showPoints();
 
   // render snake
   matrix.renderBitmap(frame, ROWS, COLUMNS);
@@ -134,13 +137,18 @@ void renderFood(void) {
 
 void gameOver(void) {
 
+  const uint32_t score = snake.getBodyPoints().size();
+
+  delay(1000);
+
   // get score (snake lenght)
   Serial.print("Score: ");
-  Serial.println(snake.getBodyPoints().size());
+  Serial.println(score);
 
-  matrix.renderBitmap(dead, ROWS, COLUMNS);
-  delay(1000);
-  matrix.renderBitmap(gameover, ROWS, COLUMNS);
+  displayScrollText(gameoverMsg);
+
+  displayScrollText(scoreMsg + String(score));
+
   delay(1000);
   snake.clear();
 
@@ -152,16 +160,16 @@ void loop() {
   key = Serial.read();
 
   if (key == keyUp) {
-    snake.turn(Snake::Direction::UP);
+    snake.turn(Snake::Direction::LEFT);
   }
   else if (key == keyDown) {
-    snake.turn(Snake::Direction::DOWN);
-  }
-  else if (key == keyRight) {
     snake.turn(Snake::Direction::RIGHT);
   }
+  else if (key == keyRight) {
+    snake.turn(Snake::Direction::UP);
+  }
   else if (key == keyLeft) {
-    snake.turn(Snake::Direction::LEFT);
+    snake.turn(Snake::Direction::DOWN);
   }
 
   if (snake.getHead() == food) {
